@@ -14,21 +14,14 @@ import { Email } from 'meteor/email'
 Meteor.startup(() => {
 
   smtp = {
-    username: 'clarkclickerras@gmail.com',   // eg: server@gentlenode.com
-    password: 'wosgyq-jyvga4-Qenpem',   // eg: 3eeP1gtizk5eziohfervU
+    username: 'email@gmail.com',   // eg: server@gentlenode.com
+    password: 'password',   // eg: 3eeP1gtizk5eziohfervU
     server:   'smtp.gmail.com',  // eg: mail.gandi.net
     port: 465
   }
 
   process.env.MAIL_URL = 'smtps://' + encodeURIComponent(smtp.username) + ':' + encodeURIComponent(smtp.password) + '@' + encodeURIComponent(smtp.server) + ':' + smtp.port + "/";
   console.log(process.env.MAIL_URL)
-  // Email.send({
-  //   from: "clarkclickerras@gmail.com",
-  //   to: "clarkclickerras+test@gmail.com",
-  //   subject: "Hello from Qlicker!",
-  //   text: "This email is being sent from Qlicker. Isn't that just swell?"
-  // })
-
   
   if (!Settings.findOne()) {
     Settings.insert({restrictDomain: false,
