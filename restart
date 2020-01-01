@@ -1,0 +1,4 @@
+#!/bin/bash
+
+./kill_qlicker
+./run_qlicker

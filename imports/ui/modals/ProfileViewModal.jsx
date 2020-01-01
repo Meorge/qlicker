@@ -65,7 +65,7 @@ export class ProfileViewModal extends ControlledForm {
     let viewUser = Meteor.user()
     const user = this.props.user
     if (viewUser.hasGreaterRole(ROLES.admin)) {
-      const sendVerificationEmailTo = (e) => this.sendVerificationEmailTo(user._id)
+      const sendVerificationEmailTo = (e) => this.sendVerificationEmailTo(user)
       const verifyUserEmail = (e) => this.verifyUserEmail(user.getEmail())
       const deleteUser = (e) => this.deleteUser(user)
       return (
