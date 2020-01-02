@@ -193,9 +193,10 @@ Meteor.methods({
   'users.sendVerificationEmailTo' (toUserId) {
     //let userId = Meteor.userId()
     check(toUserId, Helpers.MongoID)
-    if(Meteor.isServer){
+    if(Meteor.isServer) {
       const user = Meteor.user()
       if (user && user.hasGreaterRole(ROLES.admin)) {
+        console.log("Attempt to send verification email...")
         return Accounts.sendVerificationEmail(toUserId)
       } else {
         throw new Meteor.Error('not-authorized', 'not-authorized')

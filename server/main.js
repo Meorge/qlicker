@@ -11,17 +11,11 @@ import { Settings } from '../imports/api/settings.js'
 
 import { Email } from 'meteor/email'
 
+import './secret.js'
+
 Meteor.startup(() => {
-
-  smtp = {
-    username: 'email@gmail.com',   // eg: server@gentlenode.com
-    password: 'password',   // eg: 3eeP1gtizk5eziohfervU
-    server:   'smtp.gmail.com',  // eg: mail.gandi.net
-    port: 465
-  }
-
-  process.env.MAIL_URL = 'smtps://' + encodeURIComponent(smtp.username) + ':' + encodeURIComponent(smtp.password) + '@' + encodeURIComponent(smtp.server) + ':' + smtp.port + "/";
-  console.log(process.env.MAIL_URL)
+  process.env.MAIL_URL = 'smtps://' + encodeURIComponent(smtp.username) + ':' + encodeURIComponent(smtp.password) + '@' + encodeURIComponent(smtp.server) + ':' + smtp.port
+  console.log("MAIL_URL = " + process.env.MAIL_URL)
   
   if (!Settings.findOne()) {
     Settings.insert({restrictDomain: false,
