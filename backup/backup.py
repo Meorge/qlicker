@@ -9,22 +9,28 @@ If deleteOldBackups is True, any backups older than the first backupsToKeep back
 
 """
 
+global timeOfLastBackup, minutesPerBackup, backupPath, backupsToKeep, formatString, secretKeysExists
 
 import subprocess
 import time, os, shutil, traceback, sys
 import smtplib, ssl
 
-"""
-The "secret.py" file needs to have a dictionary variable called smtp.
-This must have the following keys:
-    username - effectively the email address you want to send from (emailAddress@email.com)
-    password - the password used by the email account (hunter2)
-    server   - the server's URL (smtp.email.com)
-    port     - the port used by the server (465)
-"""
-from secret_keys import smtp
 
-global timeOfLastBackup, minutesPerBackup, backupPath, backupsToKeep, formatString
+secretKeysExists = os.path.exists(os.getcwd() + "/secret_keys.py")
+if secretKeysExists:
+    """
+    The "secret_keys.py" file needs to have a dictionary variable called smtp.
+    This must have the following keys:
+        username - effectively the email address you want to send from (emailAddress@email.com)
+        password - the password used by the email account (hunter2)
+        server   - the server's URL (smtp.email.com)
+        port     - the port used by the server (465)
+    """
+    from secret_keys import smtp
+else:
+    print("NOTE: secret_keys.py does not exist, so error emails cannot be sent!")
+
+
 
 
 # Timestamp of last backup
@@ -44,13 +50,13 @@ deleteOldBackups = True
 backupsToKeep = 10
 
 # format string for backups
-formatString = "%Y-%m-%d_%H-%M-%S"
+formatString = "%Y-%m-%dT%H%M%S"
 
 # IP address of server
-server_ip = "127.0.0.1"
+serverIP = "127.0.0.1"
 
 # port of server
-server_port = "3001"
+serverPort = "3001"
 
 # email to send errors to
 destinationEmail = "m.anderson39@students.clark.edu"
@@ -67,7 +73,7 @@ def makeTimeString():
 # if the return code is not zero.
 def makeBackup():
     print(f"BACKUP: {makeTimeString()}")
-    processOutput = subprocess.run(["mongodump", "-h", server_ip, "--port", server_port, "-d", "meteor", "-o", backupPath + "/" + makeTimeString()], capture_output=True)
+    processOutput = subprocess.run(["mongodump", "-h", serverIP, "--port", serverPort, "-d", "meteor", "-o", backupPath + "/" + makeTimeString()], capture_output=True)
     print(f"Error code: {processOutput.returncode} Output: {processOutput.stderr}")
     if processOutput.returncode != 0:
         sendMongoErrorEmail(processOutput)
@@ -136,6 +142,11 @@ def sendPythonErrorEmail(tb):
 
 # Generic function to send emails
 def sendEmail(strToSend):
+    if not secretKeysExists:
+        print("Cannot send email as secret_keys.py does not exist!")
+        return
+
+
     context = ssl.create_default_context()
 
     with smtplib.SMTP_SSL(smtp["server"], smtp["port"], context=context) as server:
