@@ -11,3 +11,4 @@ server/main.js
 server/secret.js
 backup/secret_keys.py
 backup/__pycache__
+server/secret.js

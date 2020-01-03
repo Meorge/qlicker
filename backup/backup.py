@@ -40,8 +40,7 @@ timeOfLastBackup = 0
 minutesPerBackup = 60
 
 # name of backup folder
-# backups folder is currently in qlicker_backup, in the same directory as the qlicker directory itself
-backupPath = os.getcwd() + "/../../qlicker_backup/backups"
+backupPath = os.getcwd() + "/../../backup"
 
 # set to False to never delete backups
 deleteOldBackups = True
@@ -56,7 +55,7 @@ formatString = "%Y-%m-%dT%H%M%S"
 serverIP = "127.0.0.1"
 
 # port of server
-serverPort = "3001"
+serverPort = "8081"
 
 # email to send errors to
 destinationEmail = "m.anderson39@students.clark.edu"
@@ -162,6 +161,22 @@ if not os.path.exists(backupPath):
     print(f"Backup path {backupPath} does not exist, so creating it")
     os.mkdir(backupPath)
 
+
+print("\nQlicker Backup System")
+print("Malcolm Anderson")
+print("January 2020")
+print("----------------------")
+print("Current backup settings:")
+print(f"Destination:\t\t\t{backupPath}")
+print(f"Server:\t\t\t\t{serverIP}:{serverPort}")
+print(f"Minutes between backups:\t{minutesPerBackup} minutes")
+print(f"Format for backup folders:\t{formatString}")
+print(f"Error emails:\t\t\t{f'Send to {destinationEmail}' if secretKeysExists else 'Not configured'}")
+print(f"Keep backups:\t\t\t{f'{backupsToKeep} most recent' if deleteOldBackups else 'All'}")
+print("----------------------")
+print("\n\n\n")
+sys.exit()
+
 # Run forever (until manually stopped or a Python error is hit)
 while True:
     try:
@@ -182,6 +197,8 @@ while True:
     except Exception as e:
         # If an error occurs, send an email about it and then exit
         tb = traceback.format_exc()
+        print("Error encountered!!")
+        print(tb)
         sendPythonErrorEmail(tb)
         sys.exit()
         
