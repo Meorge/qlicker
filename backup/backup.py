@@ -175,7 +175,6 @@ print(f"Error emails:\t\t\t{f'Send to {destinationEmail}' if secretKeysExists el
 print(f"Keep backups:\t\t\t{f'{backupsToKeep} most recent' if deleteOldBackups else 'All'}")
 print("----------------------")
 print("\n\n\n")
-sys.exit()
 
 # Run forever (until manually stopped or a Python error is hit)
 while True:

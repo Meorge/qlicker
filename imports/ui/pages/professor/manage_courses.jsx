@@ -52,7 +52,19 @@ class _ManageCourses extends Component {
   }
 
   renderCourseList (cList) {
+    
+    // Search filtering
+    if ( this.state.filterClassSearchString ) {
+      cList = _(cList).filter(function (crs) {
+        return crs.name.toLowerCase().includes(this.state.filterClassSearchString.toLowerCase())
+        || crs.deptCode.toLowerCase().includes(this.state.filterClassSearchString.toLowerCase())
+        || crs.courseNumber.toLowerCase().includes(this.state.filterClassSearchString.toLowerCase())
+        || crs.section.toLowerCase().includes(this.state.filterClassSearchString.toLowerCase())
+        || crs.semester.toLowerCase().includes(this.state.filterClassSearchString.toLowerCase())
+      }.bind(this))
+    }
     return cList.map( (course) => {
+      console.log(Object.keys(course))
       controls = []
       if (course.inactive) {
         controls.push( { label: 'Make active', click: () => this.setCourseActive(course._id, true) } )
@@ -60,6 +72,7 @@ class _ManageCourses extends Component {
       } else {
         controls.push( { label: 'Make inactive', click: () => this.setCourseActive(course._id, false) } )
       }
+      
       return(
         <CourseListItem
           key={course._id}
@@ -70,11 +83,25 @@ class _ManageCourses extends Component {
     })
   }
 
+
+  setFilterClassSearchString (val) {
+    this.setState( {filterClassSearchString: val} )
+  }
+
   render () {
+    const setSearchCourse = (e) => {
+      console.log(e.target.value)
+      this.setState({ searchCourse: e.target.value })// need this to update the input box
+      this.setFilterClassSearchString(e.target.value)
+    }
+
     return (
       <div className='container ql-professor-page'>
         <h1>Courses</h1>
         <button className='btn btn-primary' onClick={this.promptCreateCourse}>Create Course</button>
+
+        <br />
+        <input type='text' placeholder='Search...' onChange = {setSearchCourse} value={this.state.searchCourse} />
         <div className='ql-courselist'>
           { this.renderCourseList(this.props.courses.filter((c) => !c.inactive)) }
         </div>

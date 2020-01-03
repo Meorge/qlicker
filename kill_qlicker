@@ -1,3 +1,4 @@
 #!/bin/bash
 
 tmux kill-session -t qlicker
+tmux kill-session -t qlicker_backup

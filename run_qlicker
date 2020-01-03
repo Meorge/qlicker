@@ -3,4 +3,4 @@
 # MAIL_URL=smtps://clarkclickerras:ds2397?@smtp.gmail.com:465 
 
 tmux new-session -d -s qlicker 'meteor run --port 8080'
-tmux new-session -d -s qlicker_backup 'python3.8 backup/backup.py'
+tmux new-session -d -c ./backup -s qlicker_backup 'python3.8 backup.py'
