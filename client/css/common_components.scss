@@ -2,6 +2,24 @@
 @import './bootstrap-style.scss';
 @import './mixins.scss';
 
+
+// search stuff
+.ql-search-table-container {
+  margin-top: 10pt;
+
+  .ql-search {
+    display: flex;
+    .select-container {
+      min-width: 200px;
+    }
+
+  }
+  .ql-table {
+    max-height: 800px;
+    overflow-y: auto;
+   }
+}
+
 .ql-answer-distribution {
   display: inline-block;
   float: left;
