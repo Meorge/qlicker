@@ -36,12 +36,6 @@ class _AdminDashboard extends Component {
   render () {
     const setTab = (tab) => { this.setState({ tab: tab })}
 
-    console.log("RENDER ADMIN DASHBOARD")
-
-    console.log("Institutions being sent to ManageInstitutions: " + this.props.allInsts)
-
-    console.log("END RENDER ---------------------")
-
     return (
 
       <div className='ql-admin-page'>
@@ -83,8 +77,7 @@ class _AdminDashboard extends Component {
           }
           { this.state.tab === 'institutions'
            ? <ManageInstitutions
-                settings={this.props.settings}
-                allInsts={this.props.allInsts} />
+                settings={this.props.settings} />
            : ''
           }
         </div>
@@ -95,9 +88,7 @@ class _AdminDashboard extends Component {
 export const AdminDashboard = createContainer(() => {
   console.log("CREATE CONTAINER")
   const handle = Meteor.subscribe('users.all') && Meteor.subscribe('settings') &&
-                 Meteor.subscribe('courses') //&& Meteor.subscribe('institutions')
-
-  Meteor.subscribe('institutions')
+                 Meteor.subscribe('courses')
   const courses = Courses.find({}, {sort: {name : 1, createdAt: -1}}).fetch()
   let courseNames = {}
   courses.map((c) => {
@@ -105,18 +96,9 @@ export const AdminDashboard = createContainer(() => {
   })
   const settings = Settings.findOne()
   const allUsers = Meteor.users.find({ }, { sort: { 'profile.roles.0': 1, 'profile.lastname': 1 } }).fetch()
-
-
-  const allInsts = Institutions.find({ }, { sort: {name : 1, createdAt: -1}}).fetch()
-
-  console.log("courses = " + Object.keys(courses))
-  console.log("allInsts = " +  Object.keys(allInsts))
-
-  console.log("END CREATE CONTAINER ---------------------")
   return {
     settings: settings,
     allUsers: allUsers,
-    allInsts: allInsts,
     courseNames: courseNames,
     loading: !handle.ready()
   }

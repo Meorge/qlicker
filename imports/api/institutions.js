@@ -18,6 +18,7 @@ const instPattern = {
     _id: Match.Maybe(Helpers.NEString), // mongo db id
     name: Helpers.NEString,
     instructors: Match.Maybe([Helpers.MongoID]),
+    localAdmins: Match.Maybe([Helpers.MongoID]),
     createdAt: Date,
     requireVerified: Match.Maybe(Boolean),
 }
@@ -28,12 +29,20 @@ export const Institutions = new Mongo.Collection('institutions', { transform: (d
 
 
 if (Meteor.isServer) {
-    Meteor.publish('institutions'), function () {
-        if (this.userId) {
-            this.ready()
-            return Institutions.find()
-        }
-    }
+    Meteor.publish('institutions.single', function(instId) {
+        return Institutions.findOne({_id: instId })
+    });
+    
+    Meteor.publish('institutions', function () {
+        // return this.ready()
+        return Institutions.find();
+        // if (this.userId) {
+        //     let user = Meteor.users.findOne({ _id: this.userId })
+        //     if (user.hasGreaterRole(ROLES.admin)) {
+        //       return Institutions.find()
+        //     }
+        // }
+    });
 }
 /**
  * Meteor methods for courses object
@@ -41,9 +50,7 @@ if (Meteor.isServer) {
  */
 Meteor.methods({
     'institutions.insert'(data) {
-        console.log("INSERT INSTITUTION")
         check(data, instPattern)
-        console.log("Inserting a new institution")
 
         const institutionOut = Institutions.insert(data, (e, id) => {
             if (e) {
@@ -51,16 +58,20 @@ Meteor.methods({
                 alertify.error('Error creating institution')
             }
             else {
-                console.log("INSTITUTION CREATED SUCCESSFULLY??")
+                console.log("Institution created successfully!")
+                console.log("Institutions: " + Object.keys(Institutions.find({ }, { sort: {name : 1, createdAt: -1}}).fetch()))
                 // Meteor.users.update({'profile.roles': 'admin'}, {$addToSet: { 'profile.institutions': id }}, {multi: true})
                 // Meteor.users.update({ _id: Meteor.userId() }, {
                 //     $addToSet: { 'profile.institutions': id }
                 // })
             }
         })
-
-        console.log(("END INSERT INSTITUTION ---------------------"))
         return institutionOut
-    } 
+    },
+    
+    'institutions.delete'(id) {
+        // TODO: once there are more properties associated with institutions, we've gotta remove those too (see courses.js)
+        return Institutions.remove({ _id: id })
+    }
 
 });

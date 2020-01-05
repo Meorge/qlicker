@@ -195,6 +195,23 @@ Router.route('/student', {
   }
 })
 
+import { ManageInstitution } from '../../ui/pages/professor/manage_institution'
+Router.route('/institution/:instId', {
+  name: 'institution',
+  waitOn: function() {
+    if (!Meteor.userId()) Router.go('login')
+    return Meteor.subscribe('userData') && Meteor.subscribe('institutions.single', this.params.instId) 
+  },
+  action: function() {
+    console.log("Institution time")
+    const instId = this.params.instId
+    if (!Meteor.userId()) Router.go('login')
+    if (Meteor.user().isInstructor(instId) || Meteor.user().hasRole('admin')) {
+      mount(AppLayout, {content: <PageContainer instId={instId}> <ManageInstitution instId={instId} /> </PageContainer>})
+    } else Router.go('login')
+  }
+})
+
 import { ManageCourse } from '../../ui/pages/professor/manage_course'
 import { Course } from '../../ui/pages/student/course'
 Router.route('/course/:courseId', {
