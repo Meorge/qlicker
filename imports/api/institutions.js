@@ -30,9 +30,9 @@ export const Institutions = new Mongo.Collection('institutions', { transform: (d
 
 if (Meteor.isServer) {
     Meteor.publish('institutions.single', function(instId) {
-        return Institutions.findOne({_id: instId })
+        return Institutions.find({_id: instId })
     });
-    
+
     Meteor.publish('institutions', function () {
         // return this.ready()
         return Institutions.find();
@@ -72,6 +72,14 @@ Meteor.methods({
     'institutions.delete'(id) {
         // TODO: once there are more properties associated with institutions, we've gotta remove those too (see courses.js)
         return Institutions.remove({ _id: id })
+    },
+
+
+    'institutions.removeLocalAdmin'(id, userId) {
+        // TODO: once there are more properties associated with institutions, we've gotta remove those too (see courses.js)
+        return Institutions.update({ _id: id }, {
+            $pull: { localAdmins: userId }
+          })
     }
 
 });
