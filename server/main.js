@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor'
 
 import '../imports/api/users.js'
+import { Institutions } from '../imports/api/institutions.js'
 import { Sessions } from '../imports/api/sessions.js'
 import { Questions } from '../imports/api/questions.js'
 import { Responses } from '../imports/api/responses.js'
