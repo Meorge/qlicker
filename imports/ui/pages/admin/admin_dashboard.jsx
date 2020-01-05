@@ -36,7 +36,11 @@ class _AdminDashboard extends Component {
   render () {
     const setTab = (tab) => { this.setState({ tab: tab })}
 
+    console.log("RENDER ADMIN DASHBOARD")
+
     console.log("Institutions being sent to ManageInstitutions: " + this.props.allInsts)
+
+    console.log("END RENDER ---------------------")
 
     return (
 
@@ -89,8 +93,11 @@ class _AdminDashboard extends Component {
 }
 
 export const AdminDashboard = createContainer(() => {
+  console.log("CREATE CONTAINER")
   const handle = Meteor.subscribe('users.all') && Meteor.subscribe('settings') &&
                  Meteor.subscribe('courses') //&& Meteor.subscribe('institutions')
+
+  Meteor.subscribe('institutions')
   const courses = Courses.find({}, {sort: {name : 1, createdAt: -1}}).fetch()
   let courseNames = {}
   courses.map((c) => {
@@ -102,11 +109,10 @@ export const AdminDashboard = createContainer(() => {
 
   const allInsts = Institutions.find({ }, { sort: {name : 1, createdAt: -1}}).fetch()
 
-  console.log("WOAH WE BE CREATING CONTAINER IN HERE")
-
   console.log("courses = " + Object.keys(courses))
   console.log("allInsts = " +  Object.keys(allInsts))
 
+  console.log("END CREATE CONTAINER ---------------------")
   return {
     settings: settings,
     allUsers: allUsers,

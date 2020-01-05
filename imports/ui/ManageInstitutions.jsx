@@ -11,11 +11,18 @@ import 'react-select/dist/react-select.css'
 
 import { ROLES } from '../configs'
 
+
+/*
+THE SITUATION (4 Jan 2019):
+
+When an Institution is created, everything is fine for a moment, and then it seemingly gets deleted the next time the admin dashboard's
+createContainer() is run
+
+*/
 export class ManageInstitutions extends Component {
 
   constructor(props) {
     super(props)
-    console.log(props)
     this.state = {
       allInsts: props.allInsts,
       searchInst:''
@@ -41,12 +48,11 @@ export class ManageInstitutions extends Component {
   setValue (e) {
     let stateEdits = {}
     stateEdits[e.target.dataset.name] = e.target.value
-
-    console.log(stateEdits)
     this.setState(stateEdits)
   }
 
   handleSubmitNewInstitution (e) {
+    console.log("HANDLE SUBMIT NEW INSTITUTION")
     e.preventDefault()
 
     const newInst = {
@@ -61,6 +67,8 @@ export class ManageInstitutions extends Component {
     else alertify.success('Institution created')
     this.setState({ newInstName: '' })
     })
+
+    console.log("END HANDLE SUBMIT NEW INSTITUTION ---------------------")
   }
 
   setFilterUserSearchString (val) {
@@ -68,6 +76,7 @@ export class ManageInstitutions extends Component {
   }
 
   render() {
+    console.log("RENDER MANAGE INSTITUTIONS")
     if (this.props.loading ) return <div className='ql-subs-loading'>Loading</div>
 
     const setSupportEmail = (e) => { this.setState({ supportEmail: e.target.value }) }
@@ -98,6 +107,8 @@ export class ManageInstitutions extends Component {
     //     return (_.intersection( _(this.state.searchRoles).pluck('value'), user.profile.roles)).length > 0
     //   }.bind(this))
     // }
+
+    console.log("END RENDER MANAGE INSTITUTIONS ---------------------")
 
     return(
       <div className='row'>

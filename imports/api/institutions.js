@@ -41,7 +41,7 @@ if (Meteor.isServer) {
  */
 Meteor.methods({
     'institutions.insert'(data) {
-        console.log("Inst data: <" + data + ">")
+        console.log("INSERT INSTITUTION")
         check(data, instPattern)
         console.log("Inserting a new institution")
 
@@ -58,6 +58,8 @@ Meteor.methods({
                 // })
             }
         })
+
+        console.log(("END INSERT INSTITUTION ---------------------"))
         return institutionOut
     } 
 
