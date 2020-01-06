@@ -43,6 +43,8 @@ if (Meteor.isServer) {
         //     }
         // }
     });
+
+    
 }
 /**
  * Meteor methods for courses object

@@ -170,6 +170,11 @@ if (Meteor.isServer) {
       return Meteor.users.find()
     } else return this.ready()
   })
+
+  Meteor.publish('users.withID', function(uId) {
+    return Meteor.users.find({ _id: uId })
+
+  })
 }
 
 /**

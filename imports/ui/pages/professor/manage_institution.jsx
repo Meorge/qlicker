@@ -147,10 +147,15 @@ class _ManageInstitution extends Component {
     return (<div>
       {
         localAdmins.map((sId) => {
-          const prof = Meteor.users.findOne({id: sId})
+          console.log("Looking for user with id " + sId)
+          const prof = Meteor.users.findOne(sId)
           if (!prof) {
             console.log("this user is null")
-            return
+            return (
+              <div>
+                User with ID {sId} not found
+              </div>
+            )
           }
           let controls = [{ label: 'Remove', click: () => this.removeLocalAdmin(sId) }]
           return (

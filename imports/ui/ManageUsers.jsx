@@ -246,6 +246,8 @@ export class ManageUsers extends Component {
                     return (<tr key={u._id}>
                       <td>
                         <a href='#' onClick={(e) => this.props.toggleProfileViewModal(u)}>{u.getName()}</a>
+                        <br />
+                        {u._id}
                       </td>
                       <td>{u.getEmail()} &nbsp;&nbsp; {u.emails[0].verified ? '(verified)'
                           : <a href='#' onClick={(e) => this.verifyUserEmail(u.getEmail())}>Verify</a>}
