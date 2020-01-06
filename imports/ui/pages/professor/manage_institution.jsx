@@ -18,12 +18,14 @@ import { CourseOptionsModal } from '../../modals/CourseOptionsModal'
 import { PickCourseModal } from '../../modals/PickCourseModal'
 import { AddTAModal } from '../../modals/AddTAModal'
 import { AddStudentModal } from '../../modals/AddStudentModal'
+import { AddProfessorModal } from '../../modals/AddProfessorModal'
 import { ProfileViewModal } from '../../modals/ProfileViewModal'
 
 import { ROLES } from '../../../configs'
 
 import { SessionListItem } from '../../SessionListItem'
 import { StudentListItem } from '../../StudentListItem'
+import { ProfessorListItem } from '../../ProfessorListItem'
 
 class _ManageInstitution extends Component {
 
@@ -35,7 +37,7 @@ class _ManageInstitution extends Component {
       copySessionModal: false,
       profileViewModal: false,
       addTAModal: false,
-      addStudentModal: false,
+      addProfModal: false,
       courseOptionsModal:false,
       sessionToCopy: null,
       expandedInteractiveSessionlist: false,
@@ -115,6 +117,8 @@ class _ManageInstitution extends Component {
     let localAdmins = this.props.institution.localAdmins || []
     let profs = this.props.institution.instructors || []
 
+    console.log("Local admins: " + localAdmins)
+
     // // Filter using the search string, if appropriate
     // if (this.state.searchString){
     //   students = _(students).filter( function (id) {
@@ -143,8 +147,11 @@ class _ManageInstitution extends Component {
     return (<div>
       {
         localAdmins.map((sId) => {
-          const prof = this.props.institution.localAdmins[sId]
-          if (!prof) return
+          const prof = Meteor.users.findOne({id: sId})
+          if (!prof) {
+            console.log("this user is null")
+            return
+          }
           let controls = [{ label: 'Remove', click: () => this.removeLocalAdmin(sId) }]
           return (
           
@@ -161,10 +168,13 @@ class _ManageInstitution extends Component {
   render () {
     if (this.props.loading ) return <div className='ql-subs-loading'>Loading</div>
     //console.log(this.state)
+    const toggleAddProf = () => { this.setState({ addProfModal: !this.state.addProfModal }) }
 
     // const nStudents = (this.props.course && this.props.course.students) ? this.props.course.students.length : 0
     // const nSessions = this.props.sessions ?  _(this.props.sessions).where({quiz:false}).length : 0
     // const nQuizzes = this.props.sessions ? _(this.props.sessions).where({quiz:true}).length : 0
+
+    console.log("manage_institution.jsx - inst id is <" + this.props.institution._id + ">")
 
     return (
         <div className='container ql-manage-course'>
@@ -179,7 +189,9 @@ class _ManageInstitution extends Component {
                                 this.renderLocalAdminList()
                             }
                         </div>
-                        <div className='btn btn-default'>Add Institutional Admin</div>
+                        <div className='btn btn-default' onClick={toggleAddProf}>Add Institutional Admin
+                        { this.state.addProfModal ? <AddProfessorModal instId={this.props.institution._id} done={toggleAddProf} /> : '' }
+                        </div>
                     </div>
                 </div>
             </div>

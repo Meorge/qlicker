@@ -207,7 +207,7 @@ Router.route('/institution/:instId', {
     const instId = this.params.instId
     if (!Meteor.userId()) Router.go('login')
     if (Meteor.user().isInstructor(instId) || Meteor.user().hasRole('admin')) {
-      mount(AppLayout, {content: <PageContainer instId={instId}> Hello world!!! <ManageInstitution instId={instId} /> </PageContainer>})
+      mount(AppLayout, {content: <PageContainer instId={instId}> <ManageInstitution instId={instId} /> </PageContainer>})
     } else Router.go('login')
   }
 })

@@ -75,6 +75,30 @@ Meteor.methods({
     },
 
 
+    'institutions.addLocalAdminByEmail'(email, instId) {
+        console.log("email = <" + email + ">, instId = <" + instId + ">")
+        check(email, Helpers.Email)
+        check(instId, Helpers.MongoID)
+    
+        const user = Meteor.users.findOne({ 'emails.0.address': email })
+        if (!user) throw new Meteor.Error('user-not-found', 'User not found')
+    
+        // not checking if user.profile also contains course, probably should//TODO
+        let inst = Institutions.findOne({ _id: instId })
+        if (inst.localAdmins && inst.localAdmins.includes(user._id)) {
+          throw new Meteor.Error('This user is already an institutional administrator for this institution', 'This user is already an institutional administrator for this institution')
+        }
+    
+        Meteor.users.update({ _id: user._id }, {
+          $addToSet: { 'profile.instAdminForInstitutions': instId }
+        })
+    
+        const updated = Institutions.update({ _id: instId }, {
+          '$addToSet': { localAdmins: user._id }
+        })
+        return updated
+      },
+      
     'institutions.removeLocalAdmin'(id, userId) {
         // TODO: once there are more properties associated with institutions, we've gotta remove those too (see courses.js)
         return Institutions.update({ _id: id }, {
