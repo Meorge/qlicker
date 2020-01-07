@@ -129,11 +129,54 @@ Meteor.methods({
         return updated
       },
       
-    'institutions.removeLocalAdmin'(id, userId) {
-        // TODO: once there are more properties associated with institutions, we've gotta remove those too (see courses.js)
+    'institutions.demoteLocalAdmin'(id, userId) {
+        // TODO: Update the profForInstitutions and localAdminForInstitutions
+
+        Institutions.update({_id: id }, {
+          $push: { instructors: userId }
+        })
+
+        Meteor.users.update({ _id: userId }, {
+          $pull: { 'profile.instAdminForInstitutions': instId }
+        })
+
+        Meteor.users.update({ _id: userId }, {
+          $addToSet: { 'profile.profForInstitutions': instId }
+        })
+
         return Institutions.update({ _id: id }, {
             $pull: { localAdmins: userId }
           })
+    },
+
+    'institutions.promoteToLocalAdmin'(id, userId) {
+      // TODO: Update the profForInstitutions and localAdminForInstitutions
+      Institutions.update({_id: id }, {
+        $pull: { instructors: userId }
+      })
+
+      Meteor.users.update({ _id: userId }, {
+        $addToSet: { 'profile.instAdminForInstitutions': instId }
+      })
+
+      Meteor.users.update({ _id: userId }, {
+        $pull: { 'profile.profForInstitutions': instId }
+      })
+      
+      return Institutions.update({ _id: id }, {
+          $push: { localAdmins: userId }
+        })
+    },
+
+    'institutions.removeProfessor'(id, userId) {
+      // TODO: Update the professor's profForInstitutions or whatever it is
+      Meteor.users.update({ _id: userId }, {
+        $pull: { 'profile.profForInstitutions': instId }
+      })
+
+      return Institutions.update({_id: id }, {
+        $pull: { instructors: userId }
+      })
     }
 
 });

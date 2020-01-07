@@ -80,14 +80,38 @@ class _ManageInstitution extends Component {
     }
   }
 
-  removeLocalAdmin (userId) {
+  removeProfessor (userId) {
     if (confirm('Are you sure?')) {
-      Meteor.call('institutions.removeLocalAdmin',
+      Meteor.call('institutions.removeProfessor',
         this.props.institution._id,
         userId,
         (error) => {
-          if (error) return alertify.error('Error: couldn\'t remove institutional administrator')
-          alertify.success('Removed institutional administrator')
+          if (error) return alertify.error('Error: couldn\'t remove professor')
+          alertify.success('Removed professor')
+        })
+    }
+  }
+
+  removeLocalAdmin (userId) {
+    if (confirm('Are you sure?')) {
+      Meteor.call('institutions.demoteLocalAdmin',
+        this.props.institution._id,
+        userId,
+        (error) => {
+          if (error) return alertify.error('Error: couldn\'t demote institutional administrator')
+          alertify.success('Demoted institutional administrator')
+        })
+    }
+  }
+
+  promoteToLocalAdmin (userId) {
+    if (confirm('Are you sure?')) {
+      Meteor.call('institutions.promoteToLocalAdmin',
+        this.props.institution._id,
+        userId,
+        (error) => {
+          if (error) return alertify.error('Error: couldn\'t promote professor to institutional administrator')
+          alertify.success('Promoted user to institutional administrator')
         })
     }
   }
@@ -158,7 +182,7 @@ class _ManageInstitution extends Component {
               </div>
             )
           }
-          let controls = [{ label: 'Remove', click: () => this.removeLocalAdmin(sId) }]
+          let controls = [{ label: 'Demote to professor', click: () => this.removeLocalAdmin(sId) }]
           return (
           
           <ProfessorListItem
@@ -219,7 +243,7 @@ class _ManageInstitution extends Component {
               </div>
             )
           }
-          let controls = [{ label: 'Remove', click: () => this.removeLocalAdmin(sId) }]
+          let controls = [{ label: 'Remove from institution', click: () => this.removeProfessor(sId) }, { label: 'Promote to institutional administrator', click: () => this.promoteToLocalAdmin(sId) }]
           return (
           
           <ProfessorListItem
