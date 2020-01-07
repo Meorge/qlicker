@@ -73,6 +73,11 @@ export class AddProfessorModal extends ControlledForm {
         // This user is going to be a normal professor
         else {
             console.log("just a normal professor")
+            Meteor.call('institutions.addProfessorByEmail', this.state.newEmail, this.props.instId, (error) => {
+              if (error) return alertify.error('Error: ' + error.message)
+              alertify.success('Professor added')
+              this.done()
+            })
         }
         // Meteor.call('users.promote', this.state.newEmail, (error) => {
         //   if (error) return alertify.error('Error: ' + error.message)

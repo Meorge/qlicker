@@ -33,6 +33,10 @@ if (Meteor.isServer) {
         return Institutions.find({_id: instId })
     });
 
+    // Meteor.publish('institutions.localAdmins', function(instId) {
+    //     return Institutions.find({_id: instId })
+    // });
+
     Meteor.publish('institutions', function () {
         // return this.ready()
         return Institutions.find();
@@ -97,6 +101,30 @@ Meteor.methods({
     
         const updated = Institutions.update({ _id: instId }, {
           '$addToSet': { localAdmins: user._id }
+        })
+        return updated
+      },
+
+      'institutions.addProfessorByEmail'(email, instId) {
+        console.log("email = <" + email + ">, instId = <" + instId + ">")
+        check(email, Helpers.Email)
+        check(instId, Helpers.MongoID)
+    
+        const user = Meteor.users.findOne({ 'emails.0.address': email })
+        if (!user) throw new Meteor.Error('user-not-found', 'User not found')
+    
+        // not checking if user.profile also contains course, probably should//TODO
+        let inst = Institutions.findOne({ _id: instId })
+        if (inst.instructors && inst.instructors.includes(user._id)) {
+          throw new Meteor.Error('This user is already a professor for this institution', 'This user is already a professor for this institution')
+        }
+    
+        Meteor.users.update({ _id: user._id }, {
+          $addToSet: { 'profile.profForInstitutions': instId }
+        })
+    
+        const updated = Institutions.update({ _id: instId }, {
+          '$addToSet': { instructors: user._id }
         })
         return updated
       },

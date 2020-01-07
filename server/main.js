@@ -15,8 +15,8 @@ import { Email } from 'meteor/email'
 import './secret.js'
 
 Meteor.startup(() => {
-  process.env.MAIL_URL = 'smtps://' + encodeURIComponent(smtp.username) + ':' + encodeURIComponent(smtp.password) + '@' + encodeURIComponent(smtp.server) + ':' + smtp.port
-  console.log("MAIL_URL = " + process.env.MAIL_URL)
+  // process.env.MAIL_URL = 'smtps://' + encodeURIComponent(smtp.username) + ':' + encodeURIComponent(smtp.password) + '@' + encodeURIComponent(smtp.server) + ':' + smtp.port
+  
   
   if (!Settings.findOne()) {
     Settings.insert({restrictDomain: false,

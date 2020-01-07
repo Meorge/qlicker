@@ -51,6 +51,7 @@ class _ManageInstitution extends Component {
     this.toggleVerification = this.toggleVerification.bind(this)
     this.toggleProfileViewModal = this.toggleProfileViewModal.bind(this)
     this.renderLocalAdminList = this.renderLocalAdminList.bind(this)
+    this.renderProfList = this.renderProfList.bind(this)
   //  this.toggleRequireApprovedPublicQuestions = this.toggleRequireApprovedPublicQuestions.bind(this)
   }
 
@@ -163,6 +164,68 @@ class _ManageInstitution extends Component {
           <ProfessorListItem
             key={sId}
             prof={prof}
+            isInstAdmin={true}
+            click={() => this.toggleProfileViewModal(stu)}
+            controls={isProfOrAdmin ? controls : ''} />)
+        })
+      }
+    </div>)
+  }
+
+
+  renderProfList () {
+    let uid = Meteor.userId()
+    let isProfOrAdmin = Meteor.user().hasGreaterRole('professor')
+    let localAdmins = this.props.institution.localAdmins || []
+    let profs = this.props.institution.instructors || []
+
+    console.log("Professors: " + profs)
+
+    // // Filter using the search string, if appropriate
+    // if (this.state.searchString){
+    //   students = _(students).filter( function (id) {
+    //     if (!this.props.students[id]) return false
+    //     return this.props.students[id].profile.lastname.toLowerCase().includes(this.state.searchString.toLowerCase())
+    //      || this.props.students[id].profile.firstname.toLowerCase().includes(this.state.searchString.toLowerCase())
+    //      || this.props.students[id].emails[0].address.toLowerCase().includes(this.state.searchString.toLowerCase())
+    //   }.bind(this))
+
+    //   TAs = _(TAs).filter( function (id) {
+    //     if (!this.props.TAs[id]) return false
+    //     return this.props.TAs[id].profile.lastname.toLowerCase().includes(this.state.searchString.toLowerCase())
+    //      || this.props.TAs[id].profile.firstname.toLowerCase().includes(this.state.searchString.toLowerCase())
+    //      || this.props.TAs[id].emails[0].address.toLowerCase().includes(this.state.searchString.toLowerCase())
+    //   }.bind(this))
+    // }
+
+
+    // then sort alphabetically
+    // localAdmins = _(localAdmins).sortBy(function (id) {
+    //   return (this.props.institution.localAdmins[id]
+    //     ? this.props.students[id].profile.lastname.toLowerCase()
+    //                : '0')
+    // }.bind(this))
+
+    return (<div>
+      {
+        profs.map((sId) => {
+          console.log("Looking for user with id " + sId)
+          const prof = Meteor.users.findOne(sId)
+          if (!prof) {
+            console.log("this user is null")
+            return (
+              <div>
+                User with ID {sId} not found
+              </div>
+            )
+          }
+          let controls = [{ label: 'Remove', click: () => this.removeLocalAdmin(sId) }]
+          return (
+          
+          <ProfessorListItem
+            key={sId}
+            prof={prof}
+            isInstAdmin={false}
             click={() => this.toggleProfileViewModal(stu)}
             controls={isProfOrAdmin ? controls : ''} />)
         })
@@ -188,13 +251,16 @@ class _ManageInstitution extends Component {
             <div className='row'>
                 <div className='col-md-4'>
                     <div className='ql-card'>
-                        <div className='ql-header-bar'>Institutional Admins</div>
+                        <div className='ql-header-bar'>Faculty</div>
                         <div className='ql-card-content'>
                             {
                                 this.renderLocalAdminList()
                             }
+                            {
+                              this.renderProfList()
+                            }
                         </div>
-                        <div className='btn btn-default' onClick={toggleAddProf}>Add Institutional Admin
+                        <div className='btn btn-default' onClick={toggleAddProf}>Add a faculty member
                         { this.state.addProfModal ? <AddProfessorModal instId={this.props.institution._id} done={toggleAddProf} /> : '' }
                         </div>
                     </div>
@@ -291,7 +357,10 @@ class _ManageInstitution extends Component {
 }
 
 export const ManageInstitution = createContainer((props) => {
-  const handle = Meteor.subscribe('institutions.single', props.instId)// &&
+  const handle = Meteor.subscribe('institutions.single', props.instId) &&
+    // Meteor.subscribe('institutions.localAdmins', props.instId) &&
+    // Meteor.subscribe('institutions.profs', props.instId) &&
+    Meteor.subscribe('users.all')
     //Meteor.subscribe('courses.forInstitution', props.instId)
 
   const institution = Institutions.findOne({ _id: props.instId })
