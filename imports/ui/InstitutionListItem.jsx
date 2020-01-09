@@ -18,15 +18,24 @@ import '../api/institutions.js'
  * @prop {Func} [click] - list item click handler
  */
 export class InstitutionListItem extends ListItem {
+  renderTag() {
+    if (!this.props.showUserStatus) return ('')
 
+    if (Meteor.user().isInstitutionalAdminForInstitution(this.props.inst._id)) return (<span className='student-tag tag-gold'>Institutional Administrator</span>)
+    else if (Meteor.user().isProfessorForInstitution(this.props.inst._id)) return (<span className='student-tag tag-silver'>Professor</span>)
+    else return ('')
+  }
   render () {
     const controls = this.makeControls()
     const className = this.props.inactive ? 'ql-course-list-item-inactive ql-list-item  ' : 'ql-course-list-item ql-list-item '
+
+    if (!this.props.inst) return ('')
     return (
       <div className={className + (this.props.click ? 'click' : '')} onClick={this.click}>
-        <span className='ql-course-name'>{ this.props.inst.name }</span>
+        <span className='ql-course-name'>{ this.props.inst.name }</span>&nbsp;&nbsp;
+        {this.renderTag()}
 
-        { this.props.controls ? <span className='controls'>{controls}</span> : '' }
+        { this.props.controls && this.props.controls.length > 0 ? <span className='controls'>{controls}</span> : '' }
       </div>)
   } //  end render
 
@@ -34,5 +43,6 @@ export class InstitutionListItem extends ListItem {
 
 InstitutionListItem.propTypes = {
   inst: PropTypes.object.isRequired,
+  showUserStatus: PropTypes.bool,
   click: PropTypes.func
 }

@@ -23,6 +23,7 @@ import { Settings } from './settings'
  * }
  */
 import { Courses } from './courses'
+import { Institutions } from './institutions'
 import { _ } from 'underscore'
 
 const User = function (doc) { _.extend(this, doc) }
@@ -73,6 +74,36 @@ _.extend(User.prototype, {
   },
   getThumbnailUrl: function () {
     return (this.profile.profileThumbnail ? this.profile.profileThumbnail : '/images/avatar.png')
+  },
+
+  profForInstitutions: function() {
+    return _(Institutions.find({ instructors: this._id }).fetch())
+  },
+  localAdminForInstitutions: function() {
+    console.log("Looking for the institutions that user ID " + this._id + " belongs to")
+    const b = _(Institutions.find({ localAdmins: this._id }).fetch())
+    console.log("here it is " + b)
+    return b
+  },
+
+  isInstitutionalAdminForInstitution: function(instId) {
+    const instAdminForInst = (this.profile.instAdminForInstitutions && this.profile.instAdminForInstitutions.includes(instId)) || Meteor.user().hasGreaterRole(ROLES.admin)
+    console.log("This user is " + (instAdminForInst ? '' : 'NOT') + " an institutional admin for this institution!")
+    return instAdminForInst;
+  },
+
+  isProfessorForInstitution: function(instId) {
+    const profForInst = this.profile.profForInstitutions && this.profile.profForInstitutions.includes(instId)
+    return profForInst;
+  },
+
+  isInstructorOrInstAdminForInstitution: function(instId) {
+    console.log("I'm a professor for these institutions: " + this.profile.profForInstitutions)
+    console.log("I'm a local admin for these institutions: " + this.profile.instAdminForInstitutions)
+
+    const profForInst = this.profile.profForInstitutions && this.profile.profForInstitutions.includes(instId)
+    const instAdminForInst = this.profile.instAdminForInstitutions && this.profile.instAdminForInstitutions.includes(instId)
+    return (profForInst || instAdminForInst)
   }
 })
 
@@ -163,6 +194,21 @@ if (Meteor.isServer) {
   })
 
   Meteor.publish('users.all', function () {
+    if (!this.userId) return this.ready()
+    const user = Meteor.users.findOne({ _id: this.userId })
+    // TODO evaluate if a prof should be allowed to subscribe to all users with role student.
+    if (user && user.hasGreaterRole(ROLES.admin)) {
+      return Meteor.users.find()
+    } else return this.ready()
+  })
+
+  Meteor.publish('users.facultyInInstitution', function (instId) {
+    let userList = []
+    console.log("Looking for an institution with ID " + instId)
+    let inst = Institutions.findOne({_id: instId})
+    let bigList = inst.instructors.concat(inst.localAdmins)
+    console.log("all the faculty for this institution: " + bigList)
+    return Meteor.users.find({_id: {$in: bigList}})
     if (!this.userId) return this.ready()
     const user = Meteor.users.findOne({ _id: this.userId })
     // TODO evaluate if a prof should be allowed to subscribe to all users with role student.

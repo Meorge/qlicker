@@ -8,6 +8,9 @@ import _ from 'underscore'
 
 import { ControlledForm } from '../ControlledForm'
 
+import '../../api/institutions.js'
+import { Institutions } from '../../api/institutions'
+
 /**
  * modal dialog to prompt for course details
  * @augments ControlledForm
@@ -27,6 +30,9 @@ export class CourseOptionsModal extends ControlledForm {
       requireVerified: course.requireVerified ,
       allowStudentQuestions: course.allowStudentQuestions,
     }
+
+    this.renderLocalAdminInstList = this.renderLocalAdminInstList.bind(this)
+    
   }
 
   /**
@@ -57,6 +63,22 @@ export class CourseOptionsModal extends ControlledForm {
     })
   }
 
+
+  renderLocalAdminInstList() {
+    const localAdminInsts = Meteor.user().localAdminForInstitutions()
+    //const profInsts = Meteor.user().profForInstitutions()
+    //const localAdminInsts = Institutions.find().fetch()
+
+    console.log("Institutions I've got: " + localAdminInsts)
+    localAdminInsts.map((inst) => console.log("Institution ID=<" + inst._id + "> Name=<" + inst.name + ">"))
+    //return (<option value='beep'>beep</option>)
+    return (
+      this.props.insts.map((inst) => (
+          <option value={inst._id}>{inst.name}</option>
+        ))
+    )
+
+  }
   /**
    * done(Event: e)
    * Overrided done handler
@@ -88,6 +110,11 @@ export class CourseOptionsModal extends ControlledForm {
           <label>Semester:</label>
           <input type='text' className='form-control' data-name='semester' onChange={this.setValue} value={this.state.semester} /><br />
 
+          <label>Institution:</label>
+          <select className='form-control'>
+            {this.renderLocalAdminInstList()}
+          </select><br />
+
           <input type='checkbox' data-name='requireVerified' onChange={toggleVerified} checked={this.state.requireVerified}/>
           <label>Require students to have a verifed email address to self-enroll </label> <br />
 
@@ -107,5 +134,7 @@ export class CourseOptionsModal extends ControlledForm {
 
 CourseOptionsModal.propTypes = {
   done: PropTypes.func.isRequired,
+  insts: PropTypes.object.isRequired,
   course: PropTypes.object.isRequired
 }
+

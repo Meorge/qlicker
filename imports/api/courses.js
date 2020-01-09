@@ -23,6 +23,7 @@ const coursePattern = {
   owner: Helpers.MongoID, // mongo db id reference
   enrollmentCode: Helpers.NEString,
   semester: Helpers.NEString, // F17, W16, S15, FW16 etc.
+  parentInstitution: Helpers.MongoID,
   inactive: Match.Maybe(Boolean),
   students: Match.Maybe([Helpers.MongoID]),
   instructors: Match.Maybe([Helpers.MongoID]),

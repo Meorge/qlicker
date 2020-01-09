@@ -10,6 +10,7 @@ import _ from 'underscore'
 import { createContainer } from 'meteor/react-meteor-data'
 
 import { Courses } from '../../../api/courses'
+import { Institutions } from '../../../api/institutions'
 import { Grades } from '../../../api/grades'
 import { Sessions } from '../../../api/sessions'
 import { CreateSessionModal } from '../../modals/CreateSessionModal'
@@ -371,6 +372,7 @@ class _ManageCourse extends Component {
     const nQuizzes = this.props.sessions ? _(this.props.sessions).where({quiz:true}).length : 0
     return (
       <div className='container ql-manage-course'>
+        <h4>Name of institution</h4>
         <h2><span className='ql-course-code'>{this.props.course.courseCode()}</span> - {this.props.course.name}</h2>
         <br />
         <div className='row'>
@@ -470,6 +472,7 @@ class _ManageCourse extends Component {
         { this.state.courseOptionsModal
           ? <CourseOptionsModal
               course={this.props.course}
+              insts={this.props.insts}
               done={toggleCourseOptions} />
           : ''
         }
@@ -482,7 +485,8 @@ export const ManageCourse = createContainer((props) => {
   const handle = Meteor.subscribe('courses.single', props.courseId) &&
     Meteor.subscribe('sessions.forCourse', props.courseId) &&
     Meteor.subscribe('users.studentsInCourse', props.courseId) &&
-    Meteor.subscribe('users.instructorsInCourse', props.courseId)// &&
+    Meteor.subscribe('users.instructorsInCourse', props.courseId) &&
+    Meteor.subscribe('institutions')// &&
   //  Meteor.subscribe('grades.forCourse', props.courseId)
 
   const course = Courses.findOne({ _id: props.courseId })
@@ -495,9 +499,14 @@ export const ManageCourse = createContainer((props) => {
 
   const sessions = Sessions.find({ courseId: props.courseId }, { sort: { date: -1 } }).fetch()
 
+  const insts = Meteor.user().localAdminForInstitutions()//.concat(user.profForInstitutions())
+
+  insts.map((inst) => console.log("Institution ID=<" + inst._id + "> Name=<" + inst.name + ">"))
+
   return {
     course: course,
     sessions: sessions,
+    insts: insts,
     students: _(students).indexBy('_id'),
     TAs: _(TAs).indexBy('_id'),
     loading: !handle.ready()

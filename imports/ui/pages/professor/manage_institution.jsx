@@ -182,14 +182,16 @@ class _ManageInstitution extends Component {
               </div>
             )
           }
-          let controls = [{ label: 'Demote to professor', click: () => this.removeLocalAdmin(sId) }]
+
+          var controls = [{ label: 'Demote to professor', click: () => this.removeLocalAdmin(sId) }]
+          if (!Meteor.user().isInstitutionalAdminForInstitution(this.props.institution._id)) controls = []
           return (
           
           <ProfessorListItem
             key={sId}
             prof={prof}
             isInstAdmin={true}
-            click={() => this.toggleProfileViewModal(stu)}
+            click={() => this.toggleProfileViewModal(prof)}
             controls={isProfOrAdmin ? controls : ''} />)
         })
       }
@@ -244,13 +246,15 @@ class _ManageInstitution extends Component {
             )
           }
           let controls = [{ label: 'Remove from institution', click: () => this.removeProfessor(sId) }, { label: 'Promote to institutional administrator', click: () => this.promoteToLocalAdmin(sId) }]
+          if (!Meteor.user().isInstitutionalAdminForInstitution(this.props.institution._id)) controls = []
+          console.log(controls.length + " controls available (should be 0 for professor, 2 for inst admin)")
           return (
           
           <ProfessorListItem
             key={sId}
             prof={prof}
             isInstAdmin={false}
-            click={() => this.toggleProfileViewModal(stu)}
+            click={() => this.toggleProfileViewModal(prof)}
             controls={isProfOrAdmin ? controls : ''} />)
         })
       }
@@ -284,9 +288,9 @@ class _ManageInstitution extends Component {
                               this.renderProfList()
                             }
                         </div>
-                        <div className='btn btn-default' onClick={toggleAddProf}>Add a faculty member
+                        {Meteor.user().isInstitutionalAdminForInstitution(this.props.institution._id) ? (<div className='btn btn-default' onClick={toggleAddProf}>Add a faculty member
                         { this.state.addProfModal ? <AddProfessorModal instId={this.props.institution._id} done={toggleAddProf} /> : '' }
-                        </div>
+                        </div>) : ''}
                     </div>
                 </div>
             </div>
@@ -384,7 +388,7 @@ export const ManageInstitution = createContainer((props) => {
   const handle = Meteor.subscribe('institutions.single', props.instId) &&
     // Meteor.subscribe('institutions.localAdmins', props.instId) &&
     // Meteor.subscribe('institutions.profs', props.instId) &&
-    Meteor.subscribe('users.all')
+    Meteor.subscribe('users.facultyInInstitution', props.instId)
     //Meteor.subscribe('courses.forInstitution', props.instId)
 
   const institution = Institutions.findOne({ _id: props.instId })

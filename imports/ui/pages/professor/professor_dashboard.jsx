@@ -13,6 +13,8 @@ import { CreateCourseModal } from '../../modals/CreateCourseModal'
 
 import { Courses } from '../../../api/courses'
 import { Sessions } from '../../../api/sessions'
+import { Institutions } from '../../../api/institutions'
+import { InstitutionListItem } from '../../InstitutionListItem'
 
 class _ProfessorDashboard extends Component {
 
@@ -44,6 +46,16 @@ class _ProfessorDashboard extends Component {
         <div className='ql-courselist'>
           {this.props.courses.map((course) => (<StudentCourseComponent key={course._id} course={course} sessionRoute='session.edit' />))}
         </div>
+        <br /><br />
+        <h2>My Institutions</h2>
+        <div className='ql-courselist'>
+          {this.props.localAdminInsts.map((inst) => inst ? (
+          <InstitutionListItem key={inst._id} inst={inst} click={() => { Router.go('institution', { instId: inst._id }) }} controls={[]} showUserStatus={true} />) : '')}
+
+          {this.props.profInsts.map((inst) => inst ? (
+          <InstitutionListItem key={inst._id} inst={inst} click={() => { Router.go('institution', { instId: inst._id }) }} controls={[]} showUserStatus={true} />) : '')}
+        </div>
+
 
         {/* modals */}
         { this.state.creatingCourse ? <CreateCourseModal done={this.doneCreatingCourse} /> : '' }
@@ -53,15 +65,27 @@ class _ProfessorDashboard extends Component {
 }
 
 export const ProfessorDashboard = createContainer(() => {
-  const handle = Meteor.subscribe('courses') //&& Meteor.subscribe('sessions')
+  const handle = Meteor.subscribe('courses') && Meteor.subscribe('institutions')//&& Meteor.subscribe('sessions')
 
   const courses = Courses.find({ instructors: Meteor.userId(), inactive: { $in: [null, false] } }).fetch()
+
+  // There's a property for users called 'profile.profForInstitutions' that is a list of the institutions
+  // for which they're a professor. Let's first get this array...
+  const user = Meteor.users.findOne({_id: Meteor.userId()})
+
+  const localAdminInsts = user.localAdminForInstitutions()//.concat(user.profForInstitutions())
+  const profInsts = user.profForInstitutions()
+
+  console.log("Institutions I've got: " + Object.keys(localAdminInsts))
+  localAdminInsts.map((inst) => console.log("Institution ID=<" + inst._id + "> Name=<" + inst.name + ">"))
   /*const sessions = Sessions.find({
     courseId: { $in: _(courses).pluck('_id') },
     $or: [{ status: 'visible' }, { status: 'running' }]
   }).fetch()*/
   return {
     courses: courses,
+    localAdminInsts: localAdminInsts,
+    profInsts: profInsts,
     //sessions: sessions,
     loading: !handle.ready()
   }

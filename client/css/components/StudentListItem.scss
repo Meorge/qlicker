@@ -25,26 +25,6 @@
     .student-email {
       display: block;
     }
-
-    .student-tag {
-      display: inline-block;
-      border-radius: 20px;
-      border-width: 0px;
-      text-align: center;
-      width: fit-content;
-      font-size: 80%;
-      padding: 5px;
-      padding-left: 10px;
-      padding-right: 10px;
-    }
-
-    .tag-silver {
-      background-color: #eeeeee;
-    }
-
-    .tag-gold {
-      background-color: #ffe8a9;
-    }
   }
 
   .btn-group.dropdown {
@@ -57,4 +37,24 @@
     background-size: contain;
   }
 
+}
+
+.student-tag {
+  display: inline-block;
+  border-radius: 20px;
+  border-width: 0px;
+  text-align: center;
+  width: fit-content;
+  font-size: 80%;
+  padding: 5px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.tag-silver {
+  background-color: #eeeeee;
+}
+
+.tag-gold {
+  background-color: #ffe8a9;
 }

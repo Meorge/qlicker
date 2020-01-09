@@ -206,9 +206,14 @@ Router.route('/institution/:instId', {
     console.log("Institution time")
     const instId = this.params.instId
     if (!Meteor.userId()) Router.go('login')
-    if (Meteor.user().isInstructor(instId) || Meteor.user().hasRole('admin')) {
+    console.log("ok so looks like theres a user at least")
+    console.log("is instructor or admin: " + Meteor.user().isInstructorOrInstAdminForInstitution(instId))
+    if (Meteor.user().isInstructorOrInstAdminForInstitution(instId) || Meteor.user().hasRole('admin')) {
       mount(AppLayout, {content: <PageContainer instId={instId}> <ManageInstitution instId={instId} /> </PageContainer>})
-    } else Router.go('login')
+    } else {
+      console.log("nvm lol")
+      Router.go('login')
+    }
   }
 })
 

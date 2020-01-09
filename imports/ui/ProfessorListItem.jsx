@@ -48,7 +48,7 @@ export class ProfessorListItem extends ListItem {
           {this.renderTag()}
           <span className='student-email'>{ this.props.prof.getEmail() } </span>
         </div>
-        <div className='controls'>{controls}</div>
+        {this.props.controls && this.props.controls.length > 0 ? <div className='controls'>{controls}</div> : ''}
       </div>)
   } //  end render
 

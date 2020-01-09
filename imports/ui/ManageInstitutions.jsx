@@ -137,7 +137,8 @@ export class _ManageInstitutions extends Component {
                   click={() => { Router.go('institution', { instId: u._id }) }}
                   controls={[
                     { label: 'Delete', click: () => this.deleteInstitution(u._id) }
-                  ]} />
+                  ]} 
+                  showUserStatus={false} />
             )})
           }
       </div>

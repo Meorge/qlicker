@@ -137,11 +137,11 @@ Meteor.methods({
         })
 
         Meteor.users.update({ _id: userId }, {
-          $pull: { 'profile.instAdminForInstitutions': instId }
+          $pull: { 'profile.instAdminForInstitutions': id }
         })
 
         Meteor.users.update({ _id: userId }, {
-          $addToSet: { 'profile.profForInstitutions': instId }
+          $addToSet: { 'profile.profForInstitutions': id }
         })
 
         return Institutions.update({ _id: id }, {
@@ -156,11 +156,11 @@ Meteor.methods({
       })
 
       Meteor.users.update({ _id: userId }, {
-        $addToSet: { 'profile.instAdminForInstitutions': instId }
+        $addToSet: { 'profile.instAdminForInstitutions': id }
       })
 
       Meteor.users.update({ _id: userId }, {
-        $pull: { 'profile.profForInstitutions': instId }
+        $pull: { 'profile.profForInstitutions': id }
       })
       
       return Institutions.update({ _id: id }, {
@@ -171,7 +171,7 @@ Meteor.methods({
     'institutions.removeProfessor'(id, userId) {
       // TODO: Update the professor's profForInstitutions or whatever it is
       Meteor.users.update({ _id: userId }, {
-        $pull: { 'profile.profForInstitutions': instId }
+        $pull: { 'profile.profForInstitutions': id }
       })
 
       return Institutions.update({_id: id }, {
