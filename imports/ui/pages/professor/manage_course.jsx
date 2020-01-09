@@ -499,7 +499,15 @@ export const ManageCourse = createContainer((props) => {
 
   const sessions = Sessions.find({ courseId: props.courseId }, { sort: { date: -1 } }).fetch()
 
-  const insts = Meteor.user().localAdminForInstitutions()//.concat(user.profForInstitutions())
+  const localAdminInsts = Meteor.user().localAdminForInstitutions()//.concat(user.profForInstitutions())
+  const profInsts = Meteor.user().profForInstitutions()
+
+  // Seems quite hacky, but this is the only way I can find to get local admin and prof institutions to
+  // show up in the same array
+  const insts = localAdminInsts.concat(profInsts.concat())
+  console.log(localAdminInsts)
+  console.log(profInsts)
+  console.log(insts)
 
   insts.map((inst) => console.log("Institution ID=<" + inst._id + "> Name=<" + inst.name + ">"))
 

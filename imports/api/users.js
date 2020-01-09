@@ -80,10 +80,7 @@ _.extend(User.prototype, {
     return _(Institutions.find({ instructors: this._id }).fetch())
   },
   localAdminForInstitutions: function() {
-    console.log("Looking for the institutions that user ID " + this._id + " belongs to")
-    const b = _(Institutions.find({ localAdmins: this._id }).fetch())
-    console.log("here it is " + b)
-    return b
+    return _(Institutions.find({ localAdmins: this._id }).fetch())
   },
 
   isInstitutionalAdminForInstitution: function(instId) {

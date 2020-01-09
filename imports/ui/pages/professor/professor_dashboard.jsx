@@ -58,7 +58,7 @@ class _ProfessorDashboard extends Component {
 
 
         {/* modals */}
-        { this.state.creatingCourse ? <CreateCourseModal done={this.doneCreatingCourse} /> : '' }
+        { this.state.creatingCourse ? <CreateCourseModal done={this.doneCreatingCourse} insts={this.props.localAdminInsts.concat(this.props.profInsts.concat())}/> : '' }
       </div>)
   }
 

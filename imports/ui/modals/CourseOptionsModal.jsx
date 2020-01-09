@@ -65,13 +65,6 @@ export class CourseOptionsModal extends ControlledForm {
 
 
   renderLocalAdminInstList() {
-    const localAdminInsts = Meteor.user().localAdminForInstitutions()
-    //const profInsts = Meteor.user().profForInstitutions()
-    //const localAdminInsts = Institutions.find().fetch()
-
-    console.log("Institutions I've got: " + localAdminInsts)
-    localAdminInsts.map((inst) => console.log("Institution ID=<" + inst._id + "> Name=<" + inst.name + ">"))
-    //return (<option value='beep'>beep</option>)
     return (
       this.props.insts.map((inst) => (
           <option value={inst._id}>{inst.name}</option>

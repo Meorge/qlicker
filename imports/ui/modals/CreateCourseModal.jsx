@@ -7,13 +7,15 @@ import React from 'react'
 import _ from 'underscore'
 
 import { ControlledForm } from '../ControlledForm'
+import '../../api/institutions.js'
 
 export const FORM_INPUTS = {
   name: '',
   deptCode: '',
   courseNumber: '',
   section: '',
-  semester: ''
+  semester: '',
+  parentInst: ''
 }
 
 export const DEFAULT_STATE = Object.assign({}, FORM_INPUTS, {
@@ -31,6 +33,12 @@ export class CreateCourseModal extends ControlledForm {
   constructor (props) {
     super(props)
     this.state = _.extend({}, DEFAULT_STATE)
+    this.updateParentInst = this.updateParentInst.bind(this)
+    
+  }
+
+  componentDidMount() {
+    this.setState({parentInst: "null"})
   }
 
   /**
@@ -40,9 +48,12 @@ export class CreateCourseModal extends ControlledForm {
   handleSubmit (e) {
     super.handleSubmit(e)
 
+    console.log(this.state.parentInst)
+
     let course = _.extend({
       createdAt: new Date(),
-      owner: Meteor.userId()
+      owner: Meteor.userId(),
+      parentInst: this.state.parentInst
     }, this.state)
 
     if (Meteor.isTest) {
@@ -58,6 +69,10 @@ export class CreateCourseModal extends ControlledForm {
     })
   }
 
+  updateParentInst(e) {
+    this.setState({parentInst: e.target.value})
+  }
+
   /**
    * done(Event: e)
    * Overrided done handler
@@ -68,7 +83,17 @@ export class CreateCourseModal extends ControlledForm {
     super.done()
   }
 
+  renderLocalAdminInstList() {
+    return (
+      this.props.insts.map((inst) => (
+          <option value={inst._id}>{inst.name}</option>
+        ))
+    )
+
+  }
+
   render () {
+    if (!this.state.parentInst)
     return (<div className='ql-modal-container' onClick={this.done}>
       <div className='ql-modal ql-modal-createcourse ql-card' onClick={this.preventPropagation}>
         <div className='ql-modal-header ql-header-bar'><h3>Create Course</h3></div>
@@ -87,6 +112,12 @@ export class CreateCourseModal extends ControlledForm {
 
           <label>Semester:</label>
           <input type='text' className='form-control' data-name='semester' onChange={this.setValue} placeholder='F17' /><br />
+
+          <label>Institution:</label>
+          <select className='form-control' onChange={this.updateParentInst} value={"null"}>
+            <option value="null">Select an institution...</option>
+            {this.renderLocalAdminInstList()}
+          </select><br />
 
           <div className='ql-buttongroup'>
             <a className='btn btn-default' onClick={this.done}>Cancel</a>
